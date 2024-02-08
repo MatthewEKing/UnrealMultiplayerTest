@@ -39,7 +39,12 @@ APressurePlate::APressurePlate()
 		Mesh->SetStaticMesh(MeshAsset.Object);
 		Mesh->SetRelativeScale3D(FVector(4, 4, 0.5f));
 		Mesh->SetRelativeLocation(FVector(0, 0, 7.2));
-	}	
+	}
+
+	Transporter = CreateDefaultSubobject<UTransporter>(TEXT("Transporter"));
+	Transporter->MoveTime = 0.25f;
+	Transporter->OwnerIsTriggerActor = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +54,10 @@ void APressurePlate::BeginPlay()
 	
 	TriggerMesh->SetVisibility(false);
 	TriggerMesh->SetCollisionProfileName(FName("OverlapAll"));
+
+	Transporter->SetPoints(GetActorLocation(), GetActorLocation() + FVector(0.f, 0.f, -10.f));
+
+
 }
 
 // Called every frame
@@ -56,5 +65,43 @@ void APressurePlate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (HasAuthority())
+	{
+		TArray<AActor*> OverlappingActors;
+		AActor* TriggerActor = 0;
+
+		TriggerMesh->GetOverlappingActors(OverlappingActors);
+
+		for (int i = 0; i < OverlappingActors.Num(); ++i)
+		{
+			AActor* Actor = OverlappingActors[i];
+			if (Actor->ActorHasTag("TriggerActor"))
+			{
+				TriggerActor = Actor;
+				break;
+			}
+
+			//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("Overlapping Actor: %s"), *Actor->GetName()));
+		}
+
+		if (TriggerActor)
+		{
+			if (!IsActivated)
+			{
+				IsActivated = true;
+				OnActivated.Broadcast();
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::White, FString::Printf(TEXT("Activated")));
+			}
+		}
+		else
+		{
+			if (IsActivated)
+			{
+				IsActivated = false;
+				OnDeactivated.Broadcast();
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::White, FString::Printf(TEXT("Deactivated")));
+			}
+		}
+	}
 }
 

@@ -56,6 +56,7 @@ void UMultiplayerSessionsSubsystem::Deinitialize()
 
 
 
+//function called on UI Blueprint
 void UMultiplayerSessionsSubsystem::CreateServer(FString ServerName)
 {
     PrintString("Created Server");
@@ -68,6 +69,7 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString ServerName)
         return;
     }
 
+    //Searches Steam (Or other subsystem) for this session and se
     FNamedOnlineSession *ExistingSession = SessionInterface->GetNamedSession(MySessionName);
     if (ExistingSession)
     {
@@ -101,7 +103,7 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString ServerName)
 }
 
 
-
+//function called on UI Blueprint
 void UMultiplayerSessionsSubsystem::FindServer(FString ServerName)
 {
     PrintString("Finding Server");
@@ -132,7 +134,7 @@ void UMultiplayerSessionsSubsystem::FindServer(FString ServerName)
 
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-    //delegate function that is called when a session is created.
+    //built in delegate function that is automatically called when a session is created.
     PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), bWasSuccessful));
 
     ServerCreateDel.Broadcast(bWasSuccessful);
@@ -154,6 +156,7 @@ void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, b
 
 void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
+    //built in delegate function that is automatically called when a session is destroyed.
     PrintString(FString::Printf(TEXT("OnDestroySessionComplete: %d, SessionName %s"), bWasSuccessful, *SessionName.ToString()));
 
     if (CreateServerAfterDestroyed)
@@ -167,6 +170,7 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 
 void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccessful)
 {
+    //built in delegate function that is automatically called when a session is found.
     if (!bWasSuccessful) {return;}
     if (ServerNameToFind.IsEmpty()) {return;}
 
@@ -220,14 +224,13 @@ void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccessful)
 
 void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-
+    //built in delegate function that is automatically called when a session is joined.
     ServerJoinDel.Broadcast(Result == EOnJoinSessionCompleteResult::Success);
 
     //If we successfully joined the server
     if (Result == EOnJoinSessionCompleteResult::Success)
     {
         PrintString(FString::Printf(TEXT("Successfully joined session: %s"), *SessionName.ToString()));
-
 
 
         //Obtains the IP Address of the session/server you want to connect to
@@ -246,7 +249,7 @@ void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOn
         }
         else
         {
-            PrintString("GetResolvedConnectString returned false");
+            PrintString("GetResolvedConnectString returned false, IP not found");
         }
     }
     else

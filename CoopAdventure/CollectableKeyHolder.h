@@ -6,22 +6,16 @@
 #include "GameFramework/Actor.h"
 
 #include "Components/StaticMeshComponent.h"
-#include "Transporter.h"
-
-#include "PressurePlate.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnActivated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnDeactivated);
-
+#include "CollectableKeyHolder.generated.h"
 
 UCLASS()
-class COOPADVENTURE_API APressurePlate : public AActor
+class COOPADVENTURE_API ACollectableKeyHolder : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APressurePlate();
+	ACollectableKeyHolder();
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,25 +25,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RotationSpeed;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* RootComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* TriggerMesh;
+	UStaticMeshComponent* KeyMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UTransporter* Transporter;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool IsActivated;
-
-	UPROPERTY(BlueprintAssignable)
-	FPressurePlateOnActivated OnActivated;
-
-	UPROPERTY(BlueprintAssignable)
-	FPressurePlateOnDeactivated OnDeactivated;
+	UFUNCTION()
+	void ActivateKeyMesh();
 
 };

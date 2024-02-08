@@ -5,23 +5,20 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Transporter.h"
 
-#include "PressurePlate.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnActivated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnDeactivated);
-
+#include "MovableActor.generated.h"
 
 UCLASS()
-class COOPADVENTURE_API APressurePlate : public AActor
+class COOPADVENTURE_API AMovableActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APressurePlate();
+	AMovableActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,23 +30,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* RootComp;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* TriggerMesh;
+	UArrowComponent* Point1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UArrowComponent* Point2;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UTransporter* Transporter;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool IsActivated;
-
-	UPROPERTY(BlueprintAssignable)
-	FPressurePlateOnActivated OnActivated;
-
-	UPROPERTY(BlueprintAssignable)
-	FPressurePlateOnDeactivated OnDeactivated;
-
 };
